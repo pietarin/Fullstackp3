@@ -30,6 +30,12 @@ app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
 })
 
+app.get('/api/info', (req, res) => {
+    const amount = persons.length
+    const date = Date()
+    res.send(`<p>Phonebook has info for ${amount} people <br/> ${date}</p>`)
+})
+
 app.get('/api/persons', (req, res) => {
     res.json(persons)
 })
