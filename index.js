@@ -11,7 +11,7 @@ app.use(cors())
 morgan.token('body', (request, response) => JSON.stringify(request.body))
 app.use(morgan(':method :url :status :response-time ms :body'))
 
-let persons = [
+/*let persons = [
     {
         id: 1,
         name: "Arto Hellas",
@@ -33,7 +33,7 @@ let persons = [
         number: "39-23-6423122"
     }
 ]
-
+*/
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
 })
@@ -46,7 +46,7 @@ app.get('/api/info', (request, response) => {
 
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(result => {
-        response.json(persons)
+        response.json(Person)
         console.log("phonebook:")
         result.forEach(person => {
             console.log(`${person.name} ${person.number}`)
@@ -95,7 +95,7 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    if (persons.some(e => e.name === body.name)) {
+    if (person.some(e => e.name === body.name)) {
         return response.status(400).json({
             error: 'name must be unique'
         })
@@ -123,7 +123,7 @@ app.post('/api/persons', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
+    person = person.filter(person => person.id !== id)
 
     response.status(204).end()
 })
