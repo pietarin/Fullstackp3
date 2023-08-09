@@ -32,12 +32,14 @@ app.post('/api/persons', (request, response, next) => {
     })
 })
 
+/*
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
 }
 
 // olemattomien osoitteiden käsittely
 app.use(unknownEndpoint)
+*/
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
