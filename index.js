@@ -39,14 +39,14 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/info', (request, response) => {
-    const amount = persons.length
+    const amount = person.length
     const date = Date()
     response.send(`<p>Phonebook has info for ${amount} people <br/> ${date}</p>`)
 })
 
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(result => {
-        response.json(Person)
+        response.json(result)
         console.log("phonebook:")
         result.forEach(person => {
             console.log(`${person.name} ${person.number}`)
@@ -56,9 +56,9 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    Person.findById(request.params.id).then(person => {
-        if (person) {
-            response.json(person)
+    Person.findById(request.params.id).then(result => {
+        if (result) {
+            response.json(result)
         } else {
             response.status(404).end()
         }
