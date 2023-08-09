@@ -83,6 +83,18 @@ const generateId = () => {
 app.post('/api/persons', (request, response) => {
     const body = request.body
 
+    const person = new Person ({
+        id: generateId(),
+        name: body.name,
+        number: body.number || false,
+    })
+
+    person.save().then(savedPerson => {
+        //console.log(`Added ${savedPerson.name} number ${savedPerson.number} to phonebook`)
+        response.json(savedPerson)
+    })
+
+/*
     if (body.content === undefined) {
         return response.status(400).json({ 
             error: 'content missing' 
@@ -106,19 +118,8 @@ app.post('/api/persons', (request, response) => {
             error: 'number missing'
         })
     }
+*/
 
-    const person = new Person ({
-        id: generateId(),
-        name: body.name,
-        number: body.number || false,
-    })
-
-    person.save().then(savedPerson => {
-        console.log(`Added ${savedPerson.name} number ${savedPerson.number} to phonebook`)
-        response.json(savedPerson)
-    })
-
-//    persons = persons.concat(person)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
