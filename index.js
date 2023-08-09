@@ -44,7 +44,7 @@ app.get('/api/info', (request, response) => {
     response.send(`<p>Phonebook has info for ${amount} people <br/> ${date}</p>`)
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/people', (request, response) => {
     Person.find({}).then(result => {
         response.json(result)
         console.log("phonebook:")
@@ -54,7 +54,7 @@ app.get('/api/persons', (request, response) => {
     })
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/people/:id', (request, response) => {
     const id = Number(request.params.id)
     Person.findById(request.params.id).then(result => {
         if (result) {
@@ -80,7 +80,7 @@ const generateId = () => {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/people', (request, response) => {
     const body = request.body
 
     const person = new Person ({
@@ -122,7 +122,7 @@ app.post('/api/persons', (request, response) => {
 
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/people/:id', (request, response) => {
     const id = Number(request.params.id)
     Person.findByIdAndRemove(id)
     .then(() => {
