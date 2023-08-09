@@ -4,6 +4,7 @@ const app = express()
 const Person = require('./models/person')
 var morgan = require('morgan')
 const cors = require('cors')
+const person = require('./models/person')
 
 app.use(express.static('build'))
 app.use(express.json())
@@ -58,9 +59,10 @@ app.get('/', (request, response, next) => {
 })
 
 app.get('/api/info', (request, response, next) => {
-    const amount = person.length
     const date = Date()
-    response.send(`<p>Phonebook has info for ${amount} people <br/> ${date}</p>`)
+    Person.find({}).then(people => {
+        response.send(`<p>Phonebook has info for ${people.length} people <br/> ${date}</p>`)
+    })
 })
 
 app.get('/api/persons', (request, response, next) => {
