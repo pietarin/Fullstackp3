@@ -51,7 +51,6 @@ app.get('/api/persons', (request, response) => {
         result.forEach(person => {
             console.log(`${person.name} ${person.number}`)
         })
-        mongoose.connection.close()
     })
 })
 
