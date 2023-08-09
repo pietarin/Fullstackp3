@@ -1,12 +1,14 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const Person = require('./models/person')
 var morgan = require('morgan')
 const cors = require('cors')
 
 app.use(express.json())
 app.use(express.static('build'))
 app.use(cors())
-morgan.token('body', (req, res) => JSON.stringify(req.body))
+morgan.token('body', (request, response) => JSON.stringify(request.body))
 app.use(morgan(':method :url :status :response-time ms :body'))
 
 let persons = [
@@ -32,28 +34,36 @@ let persons = [
     }
 ]
 
-app.get('/', (req, res) => {
-    res.send('<h1>Hello World!</h1>')
+app.get('/', (request, response) => {
+    response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/info', (req, res) => {
+app.get('/api/info', (request, response) => {
     const amount = persons.length
     const date = Date()
-    res.send(`<p>Phonebook has info for ${amount} people <br/> ${date}</p>`)
+    response.send(`<p>Phonebook has info for ${amount} people <br/> ${date}</p>`)
 })
 
-app.get('/api/persons', (req, res) => {
-    res.json(persons)
+app.get('/api/persons', (request, response) => {
+    Person.find({}).then(result => {
+        response.json(persons)
+        console.log("phonebook:")
+        result.forEach(person => {
+            console.log(`${person.name} ${person.number}`)
+        })
+        mongoose.connection.close()
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    Person.findById(request.params.id).then(person => {
+        if (person) {
+            response.json(person)
+        } else {
+            response.status(404).end()
+        }
+    })
 })
 
 /*
@@ -68,11 +78,17 @@ const generateId = () => {
 const generateId = () => {
     const min = 5
     const max = 100000
-    return Math.floor(Math.random() * (max - min) ) + min;
+    return Math.floor(Math.random() * (max - min)) + min;
 }
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
+
+    if (body.content === undefined) {
+        return response.status(400).json({ 
+            error: 'content missing' 
+        })
+    }
 
     if (!body.name) {
         return response.status(400).json({
@@ -92,15 +108,18 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const person = {
+    const person = new Person ({
         id: generateId(),
         name: body.name,
         number: body.number || false,
-    }
+    })
 
-    persons = persons.concat(person)
+    person.save().then(savedPerson => {
+        console.log(`Added ${savedPerson.name} number ${savedPerson.number} to phonebook`)
+        response.json(savedPerson)
+    })
 
-    response.json(person)
+//    persons = persons.concat(person)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -112,5 +131,5 @@ app.delete('/api/persons/:id', (request, response) => {
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+    console.log(`Server running on port ${PORT}`)
 })
